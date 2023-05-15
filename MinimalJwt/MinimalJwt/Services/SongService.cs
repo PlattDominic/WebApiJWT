@@ -13,7 +13,7 @@ namespace MinimalJwt.Services
             return song;
         }
         
-        public Song GetSong(int id)
+        public Song Get(int id)
         {
             var song = SongRepository.Songs.FirstOrDefault(o => o.Id == id);
 
