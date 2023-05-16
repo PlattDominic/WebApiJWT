@@ -67,23 +67,31 @@ app.UseAuthorization();
 app.UseAuthentication();
 
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Hello World!")
+    .ExcludeFromDescription();
 
-app.MapPost("/login", (UserLogin user, IUserService service) => Login(user, service));
+app.MapPost("/login", (UserLogin user, IUserService service) => Login(user, service))
+    .Accepts<UserLogin>("application/json")
+    .Produces<string>();
 
 app.MapPost("/create",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "artist-seller, administrator")]
-    (Song song, ISongService service) => Create(song, service));
+    (Song song, ISongService service) => Create(song, service))
+    .Accepts<Song>("application/json")
+    .Produces<string>(statusCode: 200, contentType: "application/json");
 
 app.MapGet("/get",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    (int id, ISongService service) => Get(id, service));
+    (int id, ISongService service) => Get(id, service))
+    .Produces<Song>();
 
-app.MapGet("/list", (ISongService service) => List(service));
+app.MapGet("/list", (ISongService service) => List(service))
+    .Produces<List<Song>>(statusCode: 200, contentType: "application/json");
 
 app.MapPut("/update",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "artist-seller, administrator")]
-    (Song newSong, ISongService service) => Update(newSong, service));
+    (Song newSong, ISongService service) => Update(newSong, service))
+    .Accepts<Song>("application/json");
 
 app.MapDelete("/delete",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "administrator")]
